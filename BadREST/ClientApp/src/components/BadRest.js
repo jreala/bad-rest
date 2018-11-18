@@ -45,7 +45,6 @@ export class BadRest extends Component {
         fetch(`api/BadRest/Tweets?startDate=${this.state.startDate.toISOString()}&endDate=${this.state.endDate.toISOString()}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 const totalCount = data.length;
                 this.setState(prev => {
                     return {
