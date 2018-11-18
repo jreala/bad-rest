@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DateTimePicker from 'react-datetime-picker';
-import { Table, Button, Badge, Pager } from 'react-bootstrap';
+import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import '../index.css';
 
 export class BadRest extends Component {
     displayName = BadRest.name
@@ -12,11 +13,12 @@ export class BadRest extends Component {
             loading: false,
             startDate: new Date(),
             endDate: new Date(),
-            perPage: 1000,
-            currentPage: 1,
+            perPage: 50,
+            currentPage: 0,
             totalPages: 0,
             totalCount: 0,
-            displayContent: []
+            displayContent: [],
+            showDetails: false
         };
     }
 
@@ -52,6 +54,21 @@ export class BadRest extends Component {
 
     onChange(key, date) {
         this.setState({ [key]: date });
+    }
+
+    handleJump(target) {
+        if (!target || target < 1 || target > this.state.totalPages) {
+            return;
+        }
+
+        this.onPageChange(parseInt(target));
+        this.setState({ currentPage: target });
+    }
+
+    toggleDetails() {
+        this.setState({
+            showDetails: !this.state.showDetails
+        });
     }
 
     renderTweets(page, data) {
@@ -90,30 +107,93 @@ export class BadRest extends Component {
         return this.state.currentPage + difference > 0 && this.state.currentPage + difference <= this.state.totalPages;
     }
 
+    renderPaginationButtons() {
+        return (
+            <div className="wrapper">
+                <div className="center">
+                    <ButtonToolbar>
+                        <ButtonGroup>
+                            <Button bsStyle="primary" onClick={() => this.onPageChange(1)}><Glyphicon glyph="backward" /></Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.currentPage - 1)}><Glyphicon glyph="chevron-left" /></Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            {this.shouldAddPaginationItem(-2) && <Button onClick={() => this.onPageChange(this.state.currentPage - 2)}>{this.state.currentPage - 2}</Button>}
+                            {this.shouldAddPaginationItem(-1) && <Button onClick={() => this.onPageChange(this.state.currentPage - 1)}>{this.state.currentPage - 1}</Button>}
+                            <Button bsStyle="primary" disabled>{this.state.currentPage}</Button>
+                            {this.shouldAddPaginationItem(1) && <Button onClick={() => this.onPageChange(this.state.currentPage + 1)}>{this.state.currentPage + 1}</Button>}
+                            {this.shouldAddPaginationItem(2) && <Button onClick={() => this.onPageChange(this.state.currentPage + 2)}>{this.state.currentPage + 2}</Button>}
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.currentPage + 1)}><Glyphicon glyph="chevron-right" /></Button>
+                        </ButtonGroup>
+                        <ButtonGroup>
+                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.totalPages)}><Glyphicon glyph="forward" /></Button>
+                        </ButtonGroup>
+                    </ButtonToolbar>
+                </div>
+            </div>
+        );
+    }
+
+    renderDetails() {
+        return (
+            <div>
+                <Button className="details" bsStyle="info" onClick={() => this.toggleDetails()}>
+                    Details <Glyphicon glyph="info-sign"></Glyphicon>
+                </Button>
+                <Collapse in={this.state.showDetails}>
+                    <div>
+                        <Well className="flex">
+                            <div className="expand">Item Count<Badge className="smallMargin">{this.state.totalCount}</Badge></div>
+                            <div className="expand">Pages<Badge className="smallMargin">{this.state.totalPages}</Badge></div>
+                            <div>Current Page<Badge className="smallMargin">{this.state.currentPage}</Badge></div>
+                        </Well>
+                    </div>
+                </Collapse>
+            </div>
+        );
+    }
+
+    renderDateTimePicker() {
+        return (
+            <Panel>
+                <h4>Date Range</h4>
+                <DateTimePicker onChange={val => this.onChange('startDate', val)} value={this.state.startDate} />
+                <span className="smallMargin">-</span>
+                <DateTimePicker onChange={val => this.onChange('endDate', val)} value={this.state.endDate} />
+                <Button bsStyle="primary" className="smallMargin" onClick={() => { this.submitRequest(); }} disabled={!(this.state.startDate && this.state.endDate)}>Submit</Button>
+            </Panel>
+        );
+    }
+
+    renderPageJump() {
+        return (
+            <div className="jumpBox">
+                <InputGroup>
+                    <FormControl type="text" placeholder="Jump To Page..." onChange={e => this.handleJump(parseInt(e.target.value))} />
+                    <InputGroup.Addon>
+                        <Glyphicon glyph="search"></Glyphicon>
+                    </InputGroup.Addon>
+                </InputGroup>
+            </div>
+        );
+    }
+
     render() {
         const contents = this.state.loading ? "Loading..." : this.state.displayContent;
-        
+
         return (
             <div>
                 <h1>Tweets</h1>
-                <span>Date Range:</span><DateTimePicker onChange={val => this.onChange('startDate', val)} value={this.state.startDate} />
-                <span>-</span><DateTimePicker onChange={val => this.onChange('endDate', val)} value={this.state.endDate} />
-                <Button bsStyle="primary" onClick={() => { this.submitRequest(); }} disabled={!(this.state.startDate && this.state.endDate)}>Submit</Button>
-                <div>Item Count <Badge>{this.state.totalCount}</Badge></div>
-                <div>Pages <Badge>{this.state.totalPages}</Badge></div>
-                <div>Current Page <Badge>{this.state.currentPage}</Badge></div>
-                <Pager>
-                    <Pager.Item previous onClick={() => this.onPageChange(1)}>&larr; First</Pager.Item>
-                    <Pager.Item previous onClick={() => this.onPageChange(this.state.currentPage - 1)}>&larr; Previous</Pager.Item>
-                    {this.shouldAddPaginationItem(-2) > 0 && <Pager.Item>{this.state.currentPage - 2}</Pager.Item>}
-                    {this.shouldAddPaginationItem(-1) && <Pager.Item>{this.state.currentPage - 1}</Pager.Item>}
-                    <Pager.Item disabled>{this.state.currentPage}</Pager.Item>
-                    {this.shouldAddPaginationItem(1) && <Pager.Item>{this.state.currentPage + 1}</Pager.Item>}
-                    {this.shouldAddPaginationItem(2) && <Pager.Item>{this.state.currentPage + 2}</Pager.Item>}
-                    <Pager.Item next onClick={() => this.onPageChange(this.state.totalPages)}>Last &rarr;</Pager.Item>
-                    <Pager.Item next onClick={() => this.onPageChange(this.state.currentPage + 1)}>Next &rarr;</Pager.Item>
-                </Pager>
+                {this.renderDateTimePicker()}
+                {this.state.totalCount > 0 && this.renderDetails()}
+                {this.state.totalCount > 0 && this.renderPageJump()}
+                {this.state.totalCount > 0 && this.renderPaginationButtons()}
                 {contents}
+                {this.state.totalCount > 0 && this.renderPageJump()}
+                {this.state.totalCount > 0 && this.renderPaginationButtons()}
             </div>
         );
     }
