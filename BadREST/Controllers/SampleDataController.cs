@@ -15,57 +15,34 @@ namespace BadREST.Controllers
     {
         private static readonly HttpClient client = new HttpClient();
 
-        private static string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        //[HttpGet("[action]")]
-        //public IEnumerable<WeatherForecast> WeatherForecasts()
-        //{
-        //    var rng = new Random();
-        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        //    {
-        //        DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-        //        TemperatureC = rng.Next(-20, 55),
-        //        Summary = Summaries[rng.Next(Summaries.Length)]
-        //    });
-        //}
-
         [HttpGet("[action]")]
-        public async Task<TweetData[]> Tweets(string startDate, string endDate)
+        public async Task<List<TweetData>> Tweets(string startDate, string endDate)
         {
-            Stack<TweetData> tweets = new Stack<TweetData>();
+            HashSet<TweetData> tweets = new HashSet<TweetData>();
             var queryMoreData = true;
             var date1 = startDate;
             var date2 = endDate;
 
-            while(queryMoreData)
+            while (queryMoreData)
             {
                 var dataset = await RequestData(date1, date2);
                 queryMoreData = dataset.Count >= 100;
 
-                dataset.ForEach(tweet => {
-                    if (tweets.Count == 0 || tweets.Peek() != tweet)
-                    {
-                        tweets.Push(tweet);
-                    }
-                });
+                dataset.ForEach(tweet => tweets.Add(tweet));
 
-                if(tweets.Count > 0)
+                if (tweets.Count > 0)
                 {
-                    date1 = tweets.Peek().stamp;
+                    date1 = tweets.Last().stamp;
                 }
             }
 
-            return tweets.ToArray();
+            return tweets.ToList().OrderBy(tweet => tweet.stamp).ToList();
         }
 
         private async Task<List<TweetData>> RequestData(string startDate, string endDate)
         {
-            DateTime dateTime1, dateTime2;
-            DateTime.TryParse(startDate, out dateTime1);
-            DateTime.TryParse(endDate, out dateTime2);
+            DateTime.TryParse(startDate, out DateTime dateTime1);
+            DateTime.TryParse(endDate, out DateTime dateTime2);
 
             var sD1 = dateTime1.ToString("yyyy-MM-ddTHH:mm:ssZ");
             var sD2 = dateTime2.ToString("yyyy-MM-ddTHH:mm:ssZ");
@@ -81,6 +58,17 @@ namespace BadREST.Controllers
             public string id { get; set; }
             public string stamp { get; set; }
             public string text { get; set; }
+
+            public override bool Equals(object obj)
+            {
+                TweetData data = obj as TweetData;
+                return data != null && string.Equals(data.id, id) && string.Equals(data.stamp, stamp) && string.Equals(data.text, text);
+            }
+
+            public override int GetHashCode()
+            {
+                return id.GetHashCode() ^ stamp.GetHashCode() ^ text.GetHashCode();
+            }
         }
     }
 }
