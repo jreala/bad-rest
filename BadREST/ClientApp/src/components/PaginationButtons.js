@@ -4,10 +4,6 @@ import '../index.css';
 
 export class PaginationButtons extends Component {
 
-    constructor(...props) {
-        super(...props);
-    }
-
     onPageChange(nextPage) {
         if (nextPage < 1 || nextPage > this.props.totalPages) {
             return;
