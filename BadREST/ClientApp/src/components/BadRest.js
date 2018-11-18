@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { DateRange } from './DateRange';
-import { Table, Glyphicon, InputGroup, FormControl } from 'react-bootstrap';
-import '../index.css';
+import { Table } from 'react-bootstrap';
 import { Details } from './Details';
 import { PaginationButtons } from './PaginationButtons';
+import { JumpToPage } from './JumpToPage';
+import '../index.css';
 
 export class BadRest extends Component {
     displayName = BadRest.name
@@ -26,16 +27,11 @@ export class BadRest extends Component {
 
     update(from, state) {
         switch (from) {
-            case 'details':
-                break;
-            case 'dateRange':
-                break;
+            case 'jump':
             case 'pagination':
                 this.setState({
                     displayContent: this.renderTweets(state.currentPage, this.state.tweets)
                 });
-                break;
-            case 'jump':
                 break;
             default:
                 break;
@@ -63,20 +59,6 @@ export class BadRest extends Component {
                 });
             });
     }
-
-
-
-
-
-    handleJump(target) {
-        if (!target || target < 1 || target > this.state.totalPages) {
-            return;
-        }
-
-        this.onPageChange(parseInt(target));
-        this.setState({ currentPage: target });
-    }
-
 
     renderTweets(page, data) {
         const offset = (page - 1) * this.state.perPage;
@@ -110,20 +92,6 @@ export class BadRest extends Component {
         );
     }
 
-
-    renderPageJump() {
-        return (
-            <div className="jumpBox">
-                <InputGroup>
-                    <FormControl type="text" placeholder="Jump To Page..." onChange={e => this.handleJump(parseInt(e.target.value))} />
-                    <InputGroup.Addon>
-                        <Glyphicon glyph="search"></Glyphicon>
-                    </InputGroup.Addon>
-                </InputGroup>
-            </div>
-        );
-    }
-
     render() {
         const contents = this.state.loading ? "Loading..." : this.state.displayContent;
         return (
@@ -131,10 +99,10 @@ export class BadRest extends Component {
                 <h1>Tweets</h1>
                 <DateRange startDate={new Date()} endDate={new Date()} update={(from, state) => this.update(from, state)} submitRequest={() => this.submitRequest()} />
                 {this.state.totalCount > 0 && <Details currentPage={this.state.currentPage} totalPages={this.state.totalPages} totalCount={this.state.totalCount} />}
-                {this.state.totalCount > 0 && this.renderPageJump()}
-                {this.state.totalCount > 0 && <PaginationButtons currentPage={this.state.currentPage} totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)}/>}
+                {this.state.totalCount > 0 && <JumpToPage totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)} />}
+                {this.state.totalCount > 0 && <PaginationButtons currentPage={this.state.currentPage} totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)} />}
                 {contents}
-                {this.state.totalCount > 0 && this.renderPageJump()}
+                {this.state.totalCount > 0 && <JumpToPage totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)} />}
                 {this.state.totalCount > 0 && <PaginationButtons currentPage={this.state.currentPage} totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)} />}
             </div>
         );
