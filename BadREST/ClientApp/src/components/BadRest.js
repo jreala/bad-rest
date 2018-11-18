@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DateTimePicker from 'react-datetime-picker';
+import { DateRange } from './DateRange';
 import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
 import '../index.css';
 
@@ -20,6 +20,10 @@ export class BadRest extends Component {
             displayContent: [],
             showDetails: false
         };
+    }
+
+    update(state) {
+        this.setState(state);
     }
 
     submitRequest() {
@@ -52,9 +56,7 @@ export class BadRest extends Component {
         });
     }
 
-    onChange(key, date) {
-        this.setState({ [key]: date });
-    }
+
 
     handleJump(target) {
         if (!target || target < 1 || target > this.state.totalPages) {
@@ -156,17 +158,7 @@ export class BadRest extends Component {
         );
     }
 
-    renderDateTimePicker() {
-        return (
-            <Panel>
-                <h4>Date Range</h4>
-                <DateTimePicker onChange={val => this.onChange('startDate', val)} value={this.state.startDate} />
-                <span className="smallMargin">-</span>
-                <DateTimePicker onChange={val => this.onChange('endDate', val)} value={this.state.endDate} />
-                <Button bsStyle="primary" className="smallMargin" onClick={() => { this.submitRequest(); }} disabled={!(this.state.startDate && this.state.endDate)}>Submit</Button>
-            </Panel>
-        );
-    }
+
 
     renderPageJump() {
         return (
@@ -183,11 +175,10 @@ export class BadRest extends Component {
 
     render() {
         const contents = this.state.loading ? "Loading..." : this.state.displayContent;
-
         return (
             <div>
                 <h1>Tweets</h1>
-                {this.renderDateTimePicker()}
+                <DateRange startDate={new Date()} endDate={new Date()} update={state => this.update(state)} submitRequest={() => this.submitRequest()} />
                 {this.state.totalCount > 0 && this.renderDetails()}
                 {this.state.totalCount > 0 && this.renderPageJump()}
                 {this.state.totalCount > 0 && this.renderPaginationButtons()}
