@@ -1,6 +1,5 @@
 ﻿import React, { Component } from 'react';
-import DateTimePicker from 'react-datetime-picker';
-import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import { Button, Badge, Glyphicon, Well, Collapse } from 'react-bootstrap';
 import '../index.css';
 
 export class Details extends Component {

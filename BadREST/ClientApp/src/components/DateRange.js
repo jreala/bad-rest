@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import DateTimePicker from 'react-datetime-picker';
-import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 import '../index.css';
 
 export class DateRange extends Component {
@@ -16,7 +16,7 @@ export class DateRange extends Component {
     onDateChange(key, date) {
         const newState = { [key]: date };
         this.setState(newState);
-        this.props.update(newState);
+        this.props.update('dateRange', newState);
     }
 
     render() {

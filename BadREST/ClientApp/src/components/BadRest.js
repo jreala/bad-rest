@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { DateRange } from './DateRange';
-import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
+import { Table, Glyphicon, InputGroup, FormControl } from 'react-bootstrap';
 import '../index.css';
 import { Details } from './Details';
+import { PaginationButtons } from './PaginationButtons';
 
 export class BadRest extends Component {
     displayName = BadRest.name
@@ -23,15 +24,32 @@ export class BadRest extends Component {
         };
     }
 
-    update(state) {
+    update(from, state) {
+        switch (from) {
+            case 'details':
+                break;
+            case 'dateRange':
+                break;
+            case 'pagination':
+                this.setState({
+                    displayContent: this.renderTweets(state.currentPage, this.state.tweets)
+                });
+                break;
+            case 'jump':
+                break;
+            default:
+                break;
+        }
         this.setState(state);
     }
 
     submitRequest() {
         this.setState({ loading: true });
+        console.log(this.state);
         fetch(`api/BadRest/Tweets?startDate=${this.state.startDate.toISOString()}&endDate=${this.state.endDate.toISOString()}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 const totalCount = data.length;
                 this.setState(prev => {
                     return {
@@ -46,16 +64,7 @@ export class BadRest extends Component {
             });
     }
 
-    onPageChange(nextPage) {
-        if (nextPage < 1 || nextPage > this.state.totalPages) {
-            return;
-        }
 
-        this.setState({
-            currentPage: nextPage,
-            displayContent: this.renderTweets(nextPage, this.state.tweets)
-        });
-    }
 
 
 
@@ -101,39 +110,6 @@ export class BadRest extends Component {
         );
     }
 
-    shouldAddPaginationItem(difference) {
-        return this.state.currentPage + difference > 0 && this.state.currentPage + difference <= this.state.totalPages;
-    }
-
-    renderPaginationButtons() {
-        return (
-            <div className="wrapper">
-                <div className="center">
-                    <ButtonToolbar>
-                        <ButtonGroup>
-                            <Button bsStyle="primary" onClick={() => this.onPageChange(1)}><Glyphicon glyph="backward" /></Button>
-                        </ButtonGroup>
-                        <ButtonGroup>
-                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.currentPage - 1)}><Glyphicon glyph="chevron-left" /></Button>
-                        </ButtonGroup>
-                        <ButtonGroup>
-                            {this.shouldAddPaginationItem(-2) && <Button onClick={() => this.onPageChange(this.state.currentPage - 2)}>{this.state.currentPage - 2}</Button>}
-                            {this.shouldAddPaginationItem(-1) && <Button onClick={() => this.onPageChange(this.state.currentPage - 1)}>{this.state.currentPage - 1}</Button>}
-                            <Button bsStyle="primary" disabled>{this.state.currentPage}</Button>
-                            {this.shouldAddPaginationItem(1) && <Button onClick={() => this.onPageChange(this.state.currentPage + 1)}>{this.state.currentPage + 1}</Button>}
-                            {this.shouldAddPaginationItem(2) && <Button onClick={() => this.onPageChange(this.state.currentPage + 2)}>{this.state.currentPage + 2}</Button>}
-                        </ButtonGroup>
-                        <ButtonGroup>
-                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.currentPage + 1)}><Glyphicon glyph="chevron-right" /></Button>
-                        </ButtonGroup>
-                        <ButtonGroup>
-                            <Button bsStyle="primary" onClick={() => this.onPageChange(this.state.totalPages)}><Glyphicon glyph="forward" /></Button>
-                        </ButtonGroup>
-                    </ButtonToolbar>
-                </div>
-            </div>
-        );
-    }
 
     renderPageJump() {
         return (
@@ -153,13 +129,13 @@ export class BadRest extends Component {
         return (
             <div>
                 <h1>Tweets</h1>
-                <DateRange startDate={new Date()} endDate={new Date()} update={state => this.update(state)} submitRequest={() => this.submitRequest()} />
+                <DateRange startDate={new Date()} endDate={new Date()} update={(from, state) => this.update(from, state)} submitRequest={() => this.submitRequest()} />
                 {this.state.totalCount > 0 && <Details currentPage={this.state.currentPage} totalPages={this.state.totalPages} totalCount={this.state.totalCount} />}
                 {this.state.totalCount > 0 && this.renderPageJump()}
-                {this.state.totalCount > 0 && this.renderPaginationButtons()}
+                {this.state.totalCount > 0 && <PaginationButtons currentPage={this.state.currentPage} totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)}/>}
                 {contents}
                 {this.state.totalCount > 0 && this.renderPageJump()}
-                {this.state.totalCount > 0 && this.renderPaginationButtons()}
+                {this.state.totalCount > 0 && <PaginationButtons currentPage={this.state.currentPage} totalPages={this.state.totalPages} update={(from, state) => this.update(from, state)} />}
             </div>
         );
     }
