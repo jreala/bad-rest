@@ -4,7 +4,13 @@ import './JumpToPage.css';
 
 export class JumpToPage extends Component {
 
-    handleJump(target) {
+    /**
+     * Jump to new page
+     *
+     * @param {Number} target
+     * @return {Void}
+     */
+    __handleJump(target) {
         if (!target || target < 1 || target > this.props.totalPages) {
             return;
         }
@@ -18,7 +24,7 @@ export class JumpToPage extends Component {
         return (
             <div className="jumpBox">
                 <InputGroup>
-                    <FormControl type="text" placeholder="Jump To Page..." onChange={e => this.handleJump(parseInt(e.target.value, 10))} />
+                    <FormControl type="text" placeholder="Jump To Page..." onChange={e => this.__handleJump(parseInt(e.target.value, 10))} />
                     <InputGroup.Addon>
                         <Glyphicon glyph="search"></Glyphicon>
                     </InputGroup.Addon>

@@ -12,7 +12,12 @@ export class Details extends Component {
         }
     }
 
-    toggleDetails() {
+    /**
+     * Show / Hide details pane
+     *
+     * @return {Void}
+     */
+    __toggleDetails() {
         this.setState({
             showDetails: !this.state.showDetails
         });
@@ -21,7 +26,7 @@ export class Details extends Component {
     render() {
         return (
             <div>
-                <Button className="details" bsStyle="info" onClick={() => this.toggleDetails()}>
+                <Button className="details" bsStyle="info" onClick={() => this.__toggleDetails()}>
                     Details <Glyphicon glyph="info-sign"></Glyphicon>
                 </Button>
                 <Collapse in={this.state.showDetails}>

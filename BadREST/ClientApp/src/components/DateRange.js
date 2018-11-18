@@ -13,7 +13,14 @@ export class DateRange extends Component {
         }
     }
 
-    onDateChange(key, date) {
+    /**
+     * Update state when date changes
+     *
+     * @param {String} key
+     * @param {String} date
+     * @return {Void}
+     */
+    __onDateChange(key, date) {
         const newState = { [key]: date };
         this.setState(newState);
         this.props.update('dateRange', newState);
@@ -23,9 +30,9 @@ export class DateRange extends Component {
         return (
             <Panel>
                 <h4>Date Range</h4>
-                <DateTimePicker onChange={val => this.onDateChange('startDate', val)} value={this.state.startDate} />
+                <DateTimePicker onChange={val => this.__onDateChange('startDate', val)} value={this.state.startDate} />
                 <span className="smallMargin">-</span>
-                <DateTimePicker onChange={val => this.onDateChange('endDate', val)} value={this.state.endDate} />
+                <DateTimePicker onChange={val => this.__onDateChange('endDate', val)} value={this.state.endDate} />
                 <Button bsStyle="primary" className="smallMargin" onClick={() => this.props.submitRequest()} disabled={!(this.state.startDate && this.state.endDate)}>Submit</Button>
             </Panel>
         );
