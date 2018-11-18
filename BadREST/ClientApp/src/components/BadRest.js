@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { DateRange } from './DateRange';
 import { Table, Button, ButtonToolbar, ButtonGroup, Badge, Panel, Glyphicon, Well, Collapse, InputGroup, FormControl, Grid, Row, Col } from 'react-bootstrap';
 import '../index.css';
+import { Details } from './Details';
 
 export class BadRest extends Component {
     displayName = BadRest.name
@@ -67,11 +68,6 @@ export class BadRest extends Component {
         this.setState({ currentPage: target });
     }
 
-    toggleDetails() {
-        this.setState({
-            showDetails: !this.state.showDetails
-        });
-    }
 
     renderTweets(page, data) {
         const offset = (page - 1) * this.state.perPage;
@@ -139,27 +135,6 @@ export class BadRest extends Component {
         );
     }
 
-    renderDetails() {
-        return (
-            <div>
-                <Button className="details" bsStyle="info" onClick={() => this.toggleDetails()}>
-                    Details <Glyphicon glyph="info-sign"></Glyphicon>
-                </Button>
-                <Collapse in={this.state.showDetails}>
-                    <div>
-                        <Well className="flex">
-                            <div className="expand">Item Count<Badge className="smallMargin">{this.state.totalCount}</Badge></div>
-                            <div className="expand">Pages<Badge className="smallMargin">{this.state.totalPages}</Badge></div>
-                            <div>Current Page<Badge className="smallMargin">{this.state.currentPage}</Badge></div>
-                        </Well>
-                    </div>
-                </Collapse>
-            </div>
-        );
-    }
-
-
-
     renderPageJump() {
         return (
             <div className="jumpBox">
@@ -179,7 +154,7 @@ export class BadRest extends Component {
             <div>
                 <h1>Tweets</h1>
                 <DateRange startDate={new Date()} endDate={new Date()} update={state => this.update(state)} submitRequest={() => this.submitRequest()} />
-                {this.state.totalCount > 0 && this.renderDetails()}
+                {this.state.totalCount > 0 && <Details currentPage={this.state.currentPage} totalPages={this.state.totalPages} totalCount={this.state.totalCount} />}
                 {this.state.totalCount > 0 && this.renderPageJump()}
                 {this.state.totalCount > 0 && this.renderPaginationButtons()}
                 {contents}
