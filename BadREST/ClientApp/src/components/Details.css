@@ -1,0 +1,12 @@
+﻿.flex {
+    display: flex;
+    justify-content: center;
+}
+
+.flex > .expand {
+    width: 33%;
+}
+
+.details {
+    float: left;
+}

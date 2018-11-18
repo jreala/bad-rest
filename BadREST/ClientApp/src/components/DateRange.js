@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import { Button, Panel } from 'react-bootstrap';
-import '../index.css';
+import './Common.css'
 
 export class DateRange extends Component {
 

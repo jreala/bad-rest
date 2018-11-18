@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { Glyphicon, InputGroup, FormControl } from 'react-bootstrap';
-import '../index.css';
+import './JumpToPage.css';
 
 export class JumpToPage extends Component {
 

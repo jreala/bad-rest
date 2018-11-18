@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { Button, ButtonToolbar, ButtonGroup, Glyphicon } from 'react-bootstrap';
-import '../index.css';
+import './PaginationButton.css';
 
 export class PaginationButtons extends Component {
 

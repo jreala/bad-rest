@@ -4,38 +4,3 @@
         padding-top: 50px;
     }
 }
-
-.wrapper {
-    text-align: center;
-}
-
-.center {
-    display: inline-block;
-}
-
-.flex {
-    display: flex;
-    justify-content: center;
-}
-
-.flex > .expand {
-    width: 33%;
-}
-
-.smallMargin {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.smallMarginAll {
-    margin: 10px;
-}
-
-.jumpBox {
-    float: right;
-    width: 200px;
-}
-
-.details{
-    float: left;
-}

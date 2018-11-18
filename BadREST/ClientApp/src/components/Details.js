@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { Button, Badge, Glyphicon, Well, Collapse } from 'react-bootstrap';
-import '../index.css';
+import './Details.css';
+import './Common.css';
 
 export class Details extends Component {
 
