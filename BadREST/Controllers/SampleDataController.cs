@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Collections.Specialized;
 
 namespace BadREST.Controllers
 {
@@ -18,7 +16,7 @@ namespace BadREST.Controllers
         [HttpGet("[action]")]
         public async Task<List<TweetData>> Tweets(string startDate, string endDate)
         {
-            HashSet<TweetData> tweets = new HashSet<TweetData>();
+            var tweets = new HashSet<TweetData>();
             var queryMoreData = true;
             var date1 = startDate;
             var date2 = endDate;
@@ -26,8 +24,8 @@ namespace BadREST.Controllers
             while (queryMoreData)
             {
                 var dataset = await RequestData(date1, date2);
-                queryMoreData = dataset.Count >= 100;
 
+                queryMoreData = dataset.Count >= 100;
                 dataset.ForEach(tweet => tweets.Add(tweet));
 
                 if (tweets.Count > 0)
@@ -44,12 +42,9 @@ namespace BadREST.Controllers
             DateTime.TryParse(startDate, out DateTime dateTime1);
             DateTime.TryParse(endDate, out DateTime dateTime2);
 
-            var sD1 = dateTime1.ToString("yyyy-MM-ddTHH:mm:ssZ");
-            var sD2 = dateTime2.ToString("yyyy-MM-ddTHH:mm:ssZ");
-
-
-            var result = await client.GetAsync($"https://badapi.iqvia.io/api/v1/Tweets?startDate={sD1}&endDate={sD2}");
+            var result = await client.GetAsync($"https://badapi.iqvia.io/api/v1/Tweets?startDate={dateTime1.ToString("yyyy-MM-ddTHH:mm:ssZ")}&endDate={dateTime2.ToString("yyyy-MM-ddTHH:mm:ssZ")}");
             var jsonData = await result.Content.ReadAsStringAsync();
+
             return JsonConvert.DeserializeObject<List<TweetData>>(jsonData);
         }
 
@@ -61,8 +56,7 @@ namespace BadREST.Controllers
 
             public override bool Equals(object obj)
             {
-                TweetData data = obj as TweetData;
-                return data != null && string.Equals(data.id, id) && string.Equals(data.stamp, stamp) && string.Equals(data.text, text);
+                return obj is TweetData data && string.Equals(data.id, id) && string.Equals(data.stamp, stamp) && string.Equals(data.text, text);
             }
 
             public override int GetHashCode()
